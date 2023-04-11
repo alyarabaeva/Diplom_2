@@ -4,19 +4,18 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import requestOjects.CreateUser;
-import requestOjects.CreateOrder;
-import responseObjects.CreateOrderResponse;
-import responseObjects.GetOrdersResponse;
-import responseObjects.OrderInfoResponse;
+import request_ojects.CreateUser;
+import request_ojects.CreateOrder;
+import response_objects.CreateOrderResponse;
+import response_objects.GetOrdersResponse;
 import steps.OrderStep;
 import steps.UserStep;
+import static org.apache.http.HttpStatus.*;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static steps.URI.setUpURI;
 
 public class GetUserOrdersTest {
@@ -28,7 +27,7 @@ public class GetUserOrdersTest {
     @Before
     public void setUp() {
         setUpURI();
-        userStep.creatUser(user).then().statusCode(200);
+        userStep.creatUser(user).then().statusCode(SC_OK);
     }
 
     @Test
@@ -39,18 +38,17 @@ public class GetUserOrdersTest {
 
         Response getOrderResponse = orderStep.getOrders(token);
 
-        getOrderResponse.then().statusCode(200);
+        getOrderResponse.then().statusCode(SC_OK);
         GetOrdersResponse orderActual = getOrderResponse.as(GetOrdersResponse.class);
         Assert.assertEquals("Номера заказов не совпадают", orderExpected.getOrder().getNumber(), orderActual.getOrders().get(0).getNumber());
         Assert.assertEquals("Id заказов не совпадают", orderExpected.getOrder().get_id(), orderActual.getOrders().get(0).get_id());
     }
 
     @Test
-    public void getOrdersUnauthorizedUserTest() throws JsonProcessingException {
-        CreateOrder newOrder = new CreateOrder(ingredients);
+    public void getOrdersUnauthorizedUserTest() {
         orderStep.getOrders("token")
                 .then()
-                .statusCode(401)
+                .statusCode(SC_UNAUTHORIZED)
                 .and()
                 .assertThat()
                 .body("message", equalTo("You should be authorised"));
@@ -60,7 +58,7 @@ public class GetUserOrdersTest {
     public void deleteUser() throws JsonProcessingException {
         String token = userStep.getAccessToken(user.getEmail(), user.getPassword());
         if (token != null) {
-            userStep.deleteUser(token).then().statusCode(202);
+            userStep.deleteUser(token).then().statusCode(SC_ACCEPTED);
         }
     }
 }

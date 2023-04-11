@@ -4,8 +4,8 @@ import io.qameta.allure.Step;
 import io.qameta.allure.internal.shadowed.jackson.core.JsonProcessingException;
 import io.qameta.allure.internal.shadowed.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
-import requestOjects.CreateUser;
-import responseObjects.AuthUserResponse;
+import request_ojects.CreateUser;
+import response_objects.AuthUserResponse;
 
 import java.util.HashMap;
 import java.util.Map;

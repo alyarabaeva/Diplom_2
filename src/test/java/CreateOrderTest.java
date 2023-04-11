@@ -2,10 +2,11 @@ import io.qameta.allure.internal.shadowed.jackson.core.JsonProcessingException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import requestOjects.CreateUser;
-import requestOjects.CreateOrder;
+import request_ojects.CreateUser;
+import request_ojects.CreateOrder;
 import steps.OrderStep;
 import steps.UserStep;
+import static org.apache.http.HttpStatus.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,12 +28,12 @@ public class CreateOrderTest {
 
     @Test
     public void createOrderAuthorizedUserTest() throws JsonProcessingException {
-        userStep.creatUser(user).then().statusCode(200);
+        userStep.creatUser(user).then().statusCode(SC_OK);
         String token = userStep.getAccessToken(user.getEmail(), user.getPassword());
         CreateOrder newOrder = new CreateOrder(ingredients);
         orderStep.createOrderWithAuth(newOrder, token)
                 .then()
-                .statusCode(200)
+                .statusCode(SC_OK)
                 .and()
                 .assertThat()
                 .body("success", equalTo(true))
@@ -46,7 +47,7 @@ public class CreateOrderTest {
         CreateOrder newOrder = new CreateOrder(ingredients);
         orderStep.createOrderWithoutAuth(newOrder)
                 .then()
-                .statusCode(200)
+                .statusCode(SC_OK)
                 .and()
                 .assertThat()
                 .body("success", equalTo(true))
@@ -58,7 +59,7 @@ public class CreateOrderTest {
     public void deleteUser() throws JsonProcessingException {
         String token = userStep.getAccessToken(user.getEmail(), user.getPassword());
         if (token != null) {
-            userStep.deleteUser(token).then().statusCode(202);
+            userStep.deleteUser(token).then().statusCode(SC_ACCEPTED);
         }
     }
 }

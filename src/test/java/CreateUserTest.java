@@ -2,8 +2,9 @@ import io.qameta.allure.internal.shadowed.jackson.core.JsonProcessingException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import requestOjects.CreateUser;
+import request_ojects.CreateUser;
 import steps.UserStep;
+import static org.apache.http.HttpStatus.*;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -22,7 +23,7 @@ public class CreateUserTest {
     public void createUserPositiveTest() {
         step.creatUser(user)
                 .then()
-                .statusCode(200)
+                .statusCode(SC_OK)
                 .and()
                 .assertThat().body("accessToken", notNullValue());
     }
@@ -31,10 +32,10 @@ public class CreateUserTest {
     public void createDuplicateUserTest() {
         step.creatUser(user)
                 .then()
-                .statusCode(200);
+                .statusCode(SC_OK);
         step.creatUser(user)
                 .then()
-                .statusCode(403);
+                .statusCode(SC_FORBIDDEN);
     }
 
     @Test
@@ -42,7 +43,7 @@ public class CreateUserTest {
         user.setEmail("");
         step.creatUser(user)
                 .then()
-                .statusCode(403)
+                .statusCode(SC_FORBIDDEN)
                 .and()
                 .assertThat()
                 .body("message", equalTo("Email, password and name are required fields"));
@@ -53,7 +54,7 @@ public class CreateUserTest {
         user.setPassword("");
         step.creatUser(user)
                 .then()
-                .statusCode(403)
+                .statusCode(SC_FORBIDDEN)
                 .and()
                 .assertThat()
                 .body("message", equalTo("Email, password and name are required fields"));
@@ -64,7 +65,7 @@ public class CreateUserTest {
         user.setName("");
         step.creatUser(user)
                 .then()
-                .statusCode(403)
+                .statusCode(SC_FORBIDDEN)
                 .and()
                 .assertThat()
                 .body("message", equalTo("Email, password and name are required fields"));

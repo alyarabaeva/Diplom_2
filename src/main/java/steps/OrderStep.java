@@ -2,7 +2,7 @@ package steps;
 
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
-import requestOjects.CreateOrder;
+import request_ojects.CreateOrder;
 
 import static io.restassured.RestAssured.given;
 

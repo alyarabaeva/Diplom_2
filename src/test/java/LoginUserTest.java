@@ -4,9 +4,10 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import requestOjects.CreateUser;
-import responseObjects.AuthUserResponse;
+import request_ojects.CreateUser;
+import response_objects.AuthUserResponse;
 import steps.UserStep;
+import static org.apache.http.HttpStatus.*;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static steps.URI.setUpURI;
@@ -25,7 +26,7 @@ public class LoginUserTest {
     @Test
     public void loginUserPositiveTest() throws JsonProcessingException {
         Response loginResponse = step.loginUser(user.getEmail(), user.getPassword());
-        loginResponse.then().statusCode(200);
+        loginResponse.then().statusCode(SC_OK);
         String loginEmail = loginResponse.as(AuthUserResponse.class).getUser().getEmail();
         String loginName = loginResponse.as(AuthUserResponse.class).getUser().getName();
 
@@ -37,7 +38,7 @@ public class LoginUserTest {
     public void loginUserWithIncorrectEmailTest() throws JsonProcessingException {
         step.loginUser("123" + user.getEmail(), user.getPassword())
                 .then()
-                .statusCode(401)
+                .statusCode(SC_UNAUTHORIZED)
                 .and()
                 .assertThat()
                 .body("message", equalTo("email or password are incorrect"));
@@ -47,7 +48,7 @@ public class LoginUserTest {
     public void loginUserWithIncorrectPasswordTest() throws JsonProcessingException {
         step.loginUser(user.getEmail(), user.getPassword() + "test")
                 .then()
-                .statusCode(401)
+                .statusCode(SC_UNAUTHORIZED)
                 .and()
                 .assertThat()
                 .body("message", equalTo("email or password are incorrect"));
@@ -57,7 +58,7 @@ public class LoginUserTest {
     public void deleteUser() throws JsonProcessingException {
         String token = step.getAccessToken(user.getEmail(), user.getPassword());
         if (token != null) {
-            step.deleteUser(token).then().statusCode(202);
+            step.deleteUser(token).then().statusCode(SC_ACCEPTED);
         }
     }
 

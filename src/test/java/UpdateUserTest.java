@@ -4,10 +4,11 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import requestOjects.CreateUser;
-import responseObjects.UserInfoResponse;
-import responseObjects.UserReponse;
+import request_ojects.CreateUser;
+import response_objects.UserInfoResponse;
+import response_objects.UserReponse;
 import steps.UserStep;
+import static org.apache.http.HttpStatus.*;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static steps.URI.setUpURI;
@@ -19,15 +20,15 @@ public class UpdateUserTest {
     @Before
     public void setUp() {
         setUpURI();
-        step.creatUser(user).then().statusCode(200);
+        step.creatUser(user).then().statusCode(SC_OK);
     }
 
     @Test
-    public void UpdateAuthorizedUserEmailTest() throws JsonProcessingException {
+    public void updateAuthorizedUserEmailTest() throws JsonProcessingException {
         String token = step.getAccessToken(user.getEmail(), user.getPassword());
         String emailNew = "sasha-ya@mail.ru";
         Response updateResponse = step.updateUser(token, "email", emailNew);
-        updateResponse.then().statusCode(200).and().body("success", equalTo(true));
+        updateResponse.then().statusCode(SC_OK).and().body("success", equalTo(true));
         //Обновили почту
         user.setEmail(emailNew);
         UserReponse userInfo = updateResponse.as(UserInfoResponse.class).getUser();
@@ -37,11 +38,11 @@ public class UpdateUserTest {
     }
 
     @Test
-    public void UpdateAuthorizedUserNameTest() throws JsonProcessingException {
+    public void updateAuthorizedUserNameTest() throws JsonProcessingException {
         String token = step.getAccessToken(user.getEmail(), user.getPassword());
         String nameNew = "Aleksandra";
         Response updateResponse = step.updateUser(token, "name", nameNew);
-        updateResponse.then().statusCode(200).and().body("success", equalTo(true));
+        updateResponse.then().statusCode(SC_OK).and().body("success", equalTo(true));
         //Обновили имя
         user.setName(nameNew);
         UserReponse userInfo = updateResponse.as(UserInfoResponse.class).getUser();
@@ -51,41 +52,41 @@ public class UpdateUserTest {
     }
 
     @Test
-    public void UpdateAuthorizedUserPasswordTest() throws JsonProcessingException {
+    public void updateAuthorizedUserPasswordTest() throws JsonProcessingException {
         String token = step.getAccessToken(user.getEmail(), user.getPassword());
         String passwordNew = "Aa12345";
         Response updateResponse = step.updateUser(token, "password", passwordNew);
-        updateResponse.then().statusCode(200).and().body("success", equalTo(true));
+        updateResponse.then().statusCode(SC_OK).and().body("success", equalTo(true));
         //Обновили пароль
         user.setPassword(passwordNew);
     }
 
     @Test
-    public void UpdateUnauthorizedUserEmailTest() throws JsonProcessingException {
+    public void updateUnauthorizedUserEmailTest() throws JsonProcessingException {
         String emailNew = "sasha-ya@mail.ru";
         Response updateResponse = step.updateUser("token", "email", emailNew);
-        updateResponse.then().statusCode(401).and().body("message", equalTo("You should be authorised"));
+        updateResponse.then().statusCode(SC_UNAUTHORIZED).and().body("message", equalTo("You should be authorised"));
     }
 
     @Test
-    public void UpdateUnauthorizedUserNameTest() throws JsonProcessingException {
+    public void updateUnauthorizedUserNameTest() throws JsonProcessingException {
         String nameNew = "Aleksandra";
         Response updateResponse = step.updateUser("token", "name", nameNew);
-        updateResponse.then().statusCode(401).and().body("message", equalTo("You should be authorised"));
+        updateResponse.then().statusCode(SC_UNAUTHORIZED).and().body("message", equalTo("You should be authorised"));
     }
 
     @Test
-    public void UpdateUnauthorizedUserPasswordTest() throws JsonProcessingException {
+    public void updateUnauthorizedUserPasswordTest() throws JsonProcessingException {
         String passwordNew = "Aa12345";
         Response updateResponse = step.updateUser("token", "password", passwordNew);
-        updateResponse.then().statusCode(401).and().body("message", equalTo("You should be authorised"));
+        updateResponse.then().statusCode(SC_UNAUTHORIZED).and().body("message", equalTo("You should be authorised"));
     }
 
     @After
     public void deleteUser() throws JsonProcessingException {
         String token = step.getAccessToken(user.getEmail(), user.getPassword());
         if (token != null) {
-            step.deleteUser(token).then().statusCode(202);
+            step.deleteUser(token).then().statusCode(SC_ACCEPTED);
         }
     }
 }
